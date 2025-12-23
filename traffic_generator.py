@@ -90,3 +90,24 @@ class TrafficSystem:
                 vehicle = Vehicle(f"V{self.vehicle_counter:04d}", lane)
                 self.queues[lane].enqueue(vehicle)
                 print(f"Added {vehicle.id} to {lane} [Size: {self.queues[lane].size()}]")
+    def calculate_green_light_time(self, normal_lanes, time_per_vehicle=2):
+           """
+        
+           Formula: |V| = (1/n) * Σ|Li|
+           Green light time = |V| * t
+        
+        
+           Returns:
+            float: Green light duration in seconds
+           """
+           n = len(normal_lanes)
+           if n == 0:
+              return 0
+           # Calculate total vehicles across all normal lanes
+           total_vehicles = sum(self.queues[lane].size() for lane in normal_lanes)
+         # Average vehicles to serve
+           vehicles_to_serve = total_vehicles / n
+         # Total green light time
+           green_time = vehicles_to_serve * time_per_vehicle
+           return green_time
+    
