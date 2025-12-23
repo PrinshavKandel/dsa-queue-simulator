@@ -110,4 +110,25 @@ class TrafficSystem:
          # Total green light time
            green_time = vehicles_to_serve * time_per_vehicle
            return green_time
+    def serve_lane(self, lane, green_light_time, time_per_vehicle=2):
+        """
+        Arguments that the method takes:
+            lane: Lane name to serve
+            green_light_time: Duration of green light in seconds
+            time_per_vehicle: Time for one vehicle to pass
+        
+        The method returns:
+            int: Number of vehicles served
+        """
+        vehicles_to_serve = int(green_light_time / time_per_vehicle)
+        vehicles_served = 0
+        
+        for _ in range(vehicles_to_serve):
+            if not self.queues[lane].is_empty():
+                self.queues[lane].dequeue()
+                vehicles_served += 1
+            else:
+                break
+        
+        return vehicles_served
     
