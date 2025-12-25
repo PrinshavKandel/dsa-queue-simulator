@@ -2,48 +2,8 @@ import random
 from datetime import datetime
 import socket
 import threading 
-HEADER = 64
-FORMAT = "utf-8"
-PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
-ADDR = (SERVER, PORT)
-DISCONNECT_MESSAGE = "DISCONNECT"
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
-
-def handle_client(conn, addr):
-    print(f"{addr} is connected")
-    connected = True
-
-    while connected:
-        message_length = conn.recv(HEADER).decode(FORMAT)
-
-        if message_length:
-            true_length = int(message_length)
-            msg = conn.recv(true_length).decode(FORMAT)
-
-            if msg == DISCONNECT_MESSAGE:
-                connected = False
-
-            print(f"[{addr}] {msg}")
-
-    conn.close() 
-
-def start():
-    server.listen()
-    print(f"[LISTENING] Server is listening on {SERVER}")
-
-    while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
-
-print("[Establishing connection between traffic_generator.py and simulator.py, please wait...]")
-start()
-
-
+import json
+import time
 class Node:
     def __init__(self, data):
         self.data = data  # Vehicle object
@@ -134,10 +94,7 @@ class TrafficSystem:
             self.lane_priority_queue.enqueue(lane_node)
     
     def vehicle_adder(self):
-        """
-        Randomly adds a vehicle to each of the 12 queues
-        Uses random probability to decide if a vehicle should be added
-        """
+
         for lane in self.lanes:
             # Random probability: 30% chance to add vehicle to each lane
             if random.random() < 0.3:
@@ -150,11 +107,7 @@ class TrafficSystem:
         self.check_priority_condition()
     
     def check_priority_condition(self):
-        """
-        Check AL2 priority condition:
-        - If AL2 has > 10 vehicles → set highest priority (10)
-        - If AL2 has < 5 vehicles → reset to normal priority (0)
-        """
+
         al2_size = self.queues["AL2"].size()
         
         if al2_size > 10:
@@ -163,10 +116,7 @@ class TrafficSystem:
             self.lane_priority_queue.update_priority("AL2", priority=0)
     
     def process_traffic_lights(self, time_per_vehicle=2):
-        """
-        Process traffic lights based on lane priority queue
-        Serves lanes in priority order, handling green light timing
-        """
+
         # Get copy of all lanes sorted by priority
         lanes_to_serve = self.lane_priority_queue.get_all_lanes()
         
@@ -193,14 +143,7 @@ class TrafficSystem:
         self.check_priority_condition()
     
     def run(self, interval=1.0, cycles=10):
-        """
-        Main execution loop
-        Continuously generates vehicles and processes traffic lights
-        
-        Args:
-            interval: Time delay between cycles (seconds)
-            cycles: Number of cycles to run (None for infinite)
-        """
+
         import time
         
         cycle_count = 0
@@ -238,18 +181,7 @@ class TrafficSystem:
         print(f"Total vehicles generated: {self.vehicle_counter}")
     
     def calculate_green_light_time(self, normal_lanes, time_per_vehicle=2):
-        """
-        Calculate green light duration based on average vehicles in normal lanes
-        Formula: |V| = (1/n) * Σ|Li|
-        Green light time = |V| * t
-        
-        Args:
-            normal_lanes: List of lane names to consider
-            time_per_vehicle: Time (seconds) required for one vehicle to pass
-        
-        Returns:
-            float: Green light duration in seconds
-        """
+
         n = len(normal_lanes)
         if n == 0:
             return 0
@@ -266,17 +198,7 @@ class TrafficSystem:
         return green_time
     
     def serve_lane(self, lane, green_light_time, time_per_vehicle=2):
-        """
-        Dequeue vehicles from a lane during green light
-        
-        Args:
-            lane: Lane name to serve
-            green_light_time: Duration of green light in seconds
-            time_per_vehicle: Time for one vehicle to pass
-        
-        Returns:
-            int: Number of vehicles served
-        """
+
         vehicles_to_serve = int(green_light_time / time_per_vehicle)
         vehicles_served = 0
         
@@ -288,6 +210,89 @@ class TrafficSystem:
                 break
         
         return vehicles_served
+
+class SocketServer:
+    """Handles all socket communication for traffic system"""
+    
+    def __init__(self):
+        self.HEADER = 64
+        self.FORMAT = "utf-8"
+        self.PORT = 5050
+        self.SERVER = socket.gethostbyname(socket.gethostname())
+        self.ADDR = (self.SERVER, self.PORT)
+        
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind(self.ADDR)
+        self.connected_clients = []
+        self.running = False
+    
+    def send_to_client(self, conn, data):
+        """Send data to a specific client"""
+        message = json.dumps(data)
+        msg_encoded = message.encode(self.FORMAT)
+        msg_length = len(msg_encoded)
+        send_length = str(msg_length).encode(self.FORMAT)
+        send_length += b' ' * (self.HEADER - len(send_length))
+        
+        try:
+            conn.send(send_length)
+            conn.send(msg_encoded)
+        except:
+            pass
+    
+    def broadcast_data(self, data):
+        """Send data to all connected clients"""
+        for conn in self.connected_clients[:]:
+            try:
+                self.send_to_client(conn, data)
+            except:
+                self.connected_clients.remove(conn)
+    
+    def handle_client(self, conn, addr):
+        """Handle individual client connection"""
+        print(f"[NEW CONNECTION] {addr} connected")
+        self.connected_clients.append(conn)
+        
+        try:
+            while self.running:
+                time.sleep(0.1)
+        except:
+            pass
+        
+        if conn in self.connected_clients:
+            self.connected_clients.remove(conn)
+        conn.close()
+        print(f"[DISCONNECTED] {addr} disconnected")
+    
+    def start(self):
+        """Start listening for client connections"""
+        self.running = True
+        
+        def listen():
+            self.server.listen()
+            print(f"[LISTENING] Server is listening on {self.SERVER}:{self.PORT}")
+            
+            while self.running:
+                try:
+                    conn, addr = self.server.accept()
+                    thread = threading.Thread(target=self.handle_client, args=(conn, addr))
+                    thread.daemon = True
+                    thread.start()
+                    print(f"[ACTIVE CONNECTIONS] {len(self.connected_clients)}")
+                except:
+                    break
+        
+        server_thread = threading.Thread(target=listen)
+        server_thread.daemon = True
+        server_thread.start()
+    
+    def stop(self):
+        """Stop the server"""
+        self.running = False
+        for conn in self.connected_clients:
+            conn.close()
+        self.server.close()
+        print("[SERVER] Stopped")
 
 
 class LaneNode:
@@ -301,45 +306,29 @@ class LaneNode:
 
 
 class LanePriorityQueue:
-    """
-    Priority Queue for managing lane/light serving order
-    Higher priority value = served first
-    Implemented using Python list with manual sorting
-    """
+
     def __init__(self):
         self.queue = []  # List of LaneNode objects
     
     def enqueue(self, lane_node):
-        """
-        Add lane to priority queue
-        Time Complexity: O(n log n) due to sorting
-        """
+
         self.queue.append(lane_node)
         self._sort_by_priority()
     
     def dequeue(self):
-        """
-        Remove and return highest priority lane
-        Time Complexity: O(1)
-        """
+
         if not self.is_empty():
             return self.queue.pop(0)
         return None
     
     def peek(self):
-        """
-        View highest priority lane without removing
-        Time Complexity: O(1)
-        """
+
         if not self.is_empty():
             return self.queue[0]
         return None
     
     def update_priority(self, lane_name, new_priority):
-        """
-        Update priority of a specific lane
-        Time Complexity: O(n log n)
-        """
+
         for node in self.queue:
             if node.lane_name == lane_name:
                 node.priority = new_priority
