@@ -1,5 +1,48 @@
 import random
 from datetime import datetime
+import socket
+import threading 
+HEADER = 64
+FORMAT = "utf-8"
+PORT = 5050
+SERVER = socket.gethostbyname(socket.gethostname())
+ADDR = (SERVER, PORT)
+DISCONNECT_MESSAGE = "DISCONNECT"
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
+
+def handle_client(conn, addr):
+    print(f"{addr} is connected")
+    connected = True
+
+    while connected:
+        message_length = conn.recv(HEADER).decode(FORMAT)
+
+        if message_length:
+            true_length = int(message_length)
+            msg = conn.recv(true_length).decode(FORMAT)
+
+            if msg == DISCONNECT_MESSAGE:
+                connected = False
+
+            print(f"[{addr}] {msg}")
+
+    conn.close() 
+
+def start():
+    server.listen()
+    print(f"[LISTENING] Server is listening on {SERVER}")
+
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
+        thread.start()
+        print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
+
+print("[Establishing connection between traffic_generator.py and simulator.py, please wait...]")
+start()
+
 
 class Node:
     def __init__(self, data):
@@ -146,7 +189,6 @@ class TrafficSystem:
                 if normal_lanes:
                     green_time = self.calculate_green_light_time(normal_lanes, time_per_vehicle)
                     self.serve_lane(lane, green_time, time_per_vehicle)
-        
         # Update priority after serving
         self.check_priority_condition()
     
