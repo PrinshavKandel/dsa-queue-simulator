@@ -179,4 +179,4 @@ class TrafficSystem:
         print(f"\n Simulation Complete\nTotal cycles: {cycle_count}\nTotal vehicles: {self.vehicle_counter}")
 if __name__ == "__main__":
     traffic_system = TrafficSystem()
-    traffic_system.run(interval=1, cycles=100)
+    traffic_system.run(interval=0.5, cycles=100)
