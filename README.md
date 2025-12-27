@@ -2,6 +2,7 @@ This project (dsa-queue-simulator) contains a real time traffic simulation and m
 
 Running the program is achieved by running the programs, traffic_generator.py and simulator.py simultaniously. One way to do that would be by running the command : "python traffic_generator.py & python simulator.py" in git-bash.
 
+DEMONSTRATION VIDEO: https://youtu.be/dGJtmiF-Mvo
 
 Refrences:
 1)Object Oriented programming essentials in python:
