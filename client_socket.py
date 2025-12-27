@@ -37,7 +37,7 @@ class SocketClient:
                 msg_length = int(msg_length.strip())
                 msg = self.client.recv(msg_length).decode(self.FORMAT)
                 data = json.loads(msg)
-                if self.data_callback: 
+                if self.data_callback:  # ← Call the callback function instead
                     self.data_callback(data)
         except:
            self.running = False
@@ -48,3 +48,6 @@ class SocketClient:
            threading.Thread(target=self.receive_data, daemon=True).start()
            return True
        return False
+  
+    
+
