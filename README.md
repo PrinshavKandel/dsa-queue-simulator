@@ -1,10 +1,17 @@
-This project (dsa-queue-simulator) contains a real time traffic simulation and management using the Queue and Priority Queue data structure to manage a 4 road intersection system. This project is built with the pygame module and interconnected through python socket programming.
+**This project (dsa-queue-simulator) contains a real time traffic simulation and management using the Queue and Priority Queue data structure to manage a 4 road intersection system. This project is built with the pygame module and interconnected through python socket programming.**
+
 ---
-Important:
-Running the program is achieved by running the programs, traffic_generator.py and simulator.py simultaniously. One way to do that would be by running the command : "python traffic_generator.py & python simulator.py" in git-bash.
+
+**Important:**
+Running the program is achieved by running the programs, traffic_generator.py and simulator.py simultaniously. One way to do that would be by running the command : "python 
+traffic_generator.py & python simulator.py" in git-bash.
+
 ---
-Demonstration video: https://youtu.be/dGJtmiF-Mvo
+
+**Demonstration video:** https://youtu.be/dGJtmiF-Mvo
+
 ---
+
 **Project Aim:**
 1. Server-side traffic generation using linked list-based queues to manage vehicles across 8 active
 lanes,
@@ -12,7 +19,9 @@ lanes,
 3. Client-side visualization using Pygame to display real-time vehicle movement and traffic light
 states.
 4. Socket-based communication for real-time data synchronization between server and client
+
 ---
+
 **Queue Logic:**
 
 This project uses two queue data structures to manage traffic. The first is a normal vehicle queue that
@@ -25,6 +34,7 @@ immediately. Once its vehicle count drops below five, its priority is reset and 
 Together, the vehicle queues store the cars, while the priority queue decides which lane is served next.
 
 ---
+
 **Pygame Implementation for simulation:**
 
 The client-side visualization(simulator.py) uses the Pygame library to display a real-time view of the traffic system. It
@@ -37,6 +47,7 @@ rectangles drawn over predefined regions.The main loop runs at 60 FPS, handling 
 updating vehicle positions based on light states.
 
 ---
+
 **Socket Programming in python for connection:**
 
 The project uses TCP socket programming to establish client-server communication for real-time data
@@ -56,24 +67,24 @@ real-time synchronization between traffic generation and visual representation w
 component's execution.
 ** Socket Architecture**
 
-| Server (Generator)                           | Data Flow            | Client (Simulator)                         |
-|---------------------------------------------|----------------------|--------------------------------------------|
-| Traffic Generation                           |                      | Pygame Display                             |
-| Queue Management                             |                      | Vehicle Rendering                          |
-| Priority Processing                          |                      | Traffic Light Visualization                |
-| Port: 5050                                  |                      | Connects to Server                         |
-|                                             |                      |                                            |
-| **Server → Client**                          | TCP Socket ─▶ | **Receives real-time traffic state**       |
-| **Server → Client**                          | JSON Data Broadcast -▶| **Renders vehicles & lights visually**    |
+| Component | Server (Generator) | Client (Simulator) |
+|-----------|-------------------|-------------------|
+| **Responsibilities** | - Traffic Generation<br>- Queue Management<br>- Priority Processing | - Pygame Display<br>- Vehicle Rendering<br>- Light Visualization |
+| **Network** | Port: 5050 | Connects to Server |
+| **Communication** | TCP Socket ← → JSON Data Broadcast |
 
 ---
 
 Refrences:
 1)Object Oriented programming essentials in python:
+
 ---
 https://www.youtube.com/watch?v=JeznW_7DlB0
+
 ---
+
 2)Socket Programming in python:
+
 ---
 
 https://youtu.be/3QiPPX-KeSc?si=pcBCv3WEB7s48JIF
@@ -82,9 +93,11 @@ https://www.youtube.com/watch?v=bwTAVGg_kVs
 ---
 3)Pygame essentials
 ---
+
 https://www.tutorialspoint.com/pygame/pygame_moving_rectangular_objects.htm
 https://www.geeksforgeeks.org/python/how-to-make-a-pygame-window/
 https://www.pygame.org/docs/tut/MoveIt.html
+
 ---
 4)Miscellaneous
 ---
