@@ -5,7 +5,7 @@ Running the program is achieved by running the programs, traffic_generator.py an
 ---
 Demonstration video: https://youtu.be/dGJtmiF-Mvo
 ---
-##Project Aim:
+**Project Aim:**
 1. Server-side traffic generation using linked list-based queues to manage vehicles across 8 active
 lanes,
 2. Priority queue system that dynamically adjusts lane priorities based on traffic density,
@@ -13,7 +13,7 @@ lanes,
 states.
 4. Socket-based communication for real-time data synchronization between server and client
 ---
-##Queue Logic:
+**Queue Logic:**
 
 This project uses two queue data structures to manage traffic. The first is a normal vehicle queue that
 follows the First In First Out principle and is implemented using a singly linked list.
@@ -23,8 +23,9 @@ that the highest-priority lane is served first. Under normal conditions, all lan
 congestion occurs, such as when lane AL2 exceeds ten vehicles, it is given higher priority and served
 immediately. Once its vehicle count drops below five, its priority is reset and normal operation resumes.
 Together, the vehicle queues store the cars, while the priority queue decides which lane is served next.
+
 ---
-##Pygame Implementation for simulation:
+**Pygame Implementation for simulation:**
 
 The client-side visualization(simulator.py) uses the Pygame library to display a real-time view of the traffic system. It
 initializes a 1000 by 800 pixel window with a 60 FPS loop . A custom made background image shows the
@@ -34,8 +35,9 @@ frame, collision detection with a 38-pixel safe distance, and smooth turning usi
 calculations is managed. Traffic light states are shown by masking inactive red or green lights with black
 rectangles drawn over predefined regions.The main loop runs at 60 FPS, handling window events,
 updating vehicle positions based on light states.
+
 ---
-##Socket Programming in python for connection:
+**Socket Programming in python for connection:**
 
 The project uses TCP socket programming to establish client-server communication for real-time data
 synchronization between the traffic_generator.py acting as server and simulator.py acting as a client.
@@ -52,7 +54,7 @@ callback function which updates the pygame visualization. This architecture allo
 visualization to run as separate processes, with the socket acting as the communication bridge, enabling
 real-time synchronization between traffic generation and visual representation without blocking either
 component's execution.
-## System Architecture
+** Socket Architecture**
 
 | Server (Generator)                           | Data Flow            | Client (Simulator)                         |
 |---------------------------------------------|----------------------|--------------------------------------------|
@@ -73,8 +75,10 @@ https://www.youtube.com/watch?v=JeznW_7DlB0
 ---
 2)Socket Programming in python:
 ---
+
 https://youtu.be/3QiPPX-KeSc?si=pcBCv3WEB7s48JIF
 https://www.youtube.com/watch?v=bwTAVGg_kVs
+
 ---
 3)Pygame essentials
 ---
