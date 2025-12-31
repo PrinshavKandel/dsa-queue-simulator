@@ -65,7 +65,8 @@ callback function which updates the pygame visualization. This architecture allo
 visualization to run as separate processes, with the socket acting as the communication bridge, enabling
 real-time synchronization between traffic generation and visual representation without blocking either
 component's execution.
-** Socket Architecture**
+
+**Socket Architecture:**
 
 | Component | Server (Generator) | Client (Simulator) |
 |-----------|-------------------|-------------------|
@@ -75,7 +76,7 @@ component's execution.
 
 ---
 
-***A description of the class Methods(functions) used:**
+**A description of the class Methods(functions) used:**
 
 ***VehicleQueue Functions***
 
@@ -104,10 +105,52 @@ component's execution.
 6. get_broadcast_data() - Prepares data for client broadcast
 
 ***Car Movement Functions***
-1.move(light_state) - Updates car position based on light state
-2.check_collision_ahead(other_cars) - Prevents cars from colliding
-3.should_stop_at_red(light_state) - Checks if car should stop at red light
-4.has_passed_intersection() - Determines if car has crossed intersection
+1. move(light_state) - Updates car position based on light state
+2. check_collision_ahead(other_cars) - Prevents cars from colliding
+3. should_stop_at_red(light_state) - Checks if car should stop at red light
+4. has_passed_intersection() - Determines if car has crossed intersection
+   
+
+---
+
+**Time Complexity Analysis**
+| Operation | Time Complexity |
+|-----------|----------------|
+| VehicleQueue.enqueue() | O(1) |
+| VehicleQueue.dequeue() | O(1) |
+| VehicleQueue.size() | O(1) |
+| VehicleQueue.get_all_vehicles() | O(n) |
+| LanePriorityQueue.enqueue() | O(n log n) |
+| LanePriorityQueue.update_priority() | O(n log n) |
+| LanePriorityQueue.get_priority() | O(n) |
+
+***1. Vehicle Generation***
+
+Vehicle generation runs in O(m) time, where m = 8 represents the number of active lanes. Each lane has a 30 percent probability of generating a vehicle. Creating a vehicle and enqueuing it takes O(1) time per vehicle. Since m is fixed at 8, the total cost becomes O(8), which simplifies to O(1) constant time.
+
+***2. Priority Check***
+
+The priority check operates in O(n log n) time in the worst case. Checking whether lane AL2 exceeds the threshold takes O(1) time. If a priority update is required, it involves reordering priorities, which takes O(n log n), where n = 4 lanes. Since n is very small and constant, the total cost O(4 log 4) simplifies to O(1).
+
+***3. Traffic Light Selection***
+
+Traffic light selection runs in O(n + m) time. Retrieving all lanes from the priority queue takes O(1) time. Identifying non-empty lanes requires O(n) time, where n = 4 lanes, and calculating averages for normal lanes also takes O(n). Since n is constant, the total complexity O(4) simplifies to O(1).
+
+***4. Vehicle Service***
+
+Vehicle servicing takes O(m) time. Dequeuing vehicles from each green lane takes O(1) time per lane. With a maximum of 3 lanes served at a time, the total cost is O(3), which simplifies to O(1).
+
+***5. Data Broadcast***
+
+Data broadcasting runs in O(m × k) time, where m = 8 lanes and k is the number of vehicles per lane with a maximum of 12. Iterating through all vehicles to prepare broadcast data takes O(8 × 12) = O(96), which simplifies to O(1) since both values are constant.
+
+***6. Overall Per-Cycle Complexity***
+
+The overall per-cycle complexity is O(n log n) + O(m × k). Substituting constants gives O(4 log 4) + O(8 × 12) = O(8) + O(96) = O(104), which simplifies to O(1). Therefore, each simulation cycle runs in constant time.
+
+***Total Simulation Complexity***
+
+The total simulation complexity is O(c), where c is the number of cycles. Since each cycle executes in constant time, the total runtime scales linearly with the number of cycles. For example, running 100 cycles results in O(100), which remains linear time complexity.
 
 ---
 
