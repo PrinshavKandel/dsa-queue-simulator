@@ -74,12 +74,12 @@ simulator.py ──────────┐              │
                        └──< Receives traffic updates ───────┘
 ```
 
-## How to Run
+***How to Run***
 bash
-# Terminal 1: Start traffic generator (server)
+Terminal 1: Start traffic generator (server)
 python traffic_generator.py
 
-# Terminal 2: Start simulator (client)
+Terminal 2: Start simulator (client)
 python simulator.py
 
 
@@ -202,6 +202,8 @@ component's execution.
 | LanePriorityQueue.enqueue() | O(n log n) |
 | LanePriorityQueue.update_priority() | O(n log n) |
 | LanePriorityQueue.get_priority() | O(n) |
+
+
 note: VehicleQueue is implemented differently to LanePriorityQueue, hence the difference in time complexity.
 ***1. Vehicle Generation***
 
