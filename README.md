@@ -2,9 +2,88 @@
 
 ---
 
+**Author:Prinshav Kandel
+Computer Science(I)
+Roll no. 30**
+
+---
+
 **Important:**
 Running the program is achieved by running the programs, traffic_generator.py and simulator.py simultaniously. One way to do that would be by running the command : "python 
 traffic_generator.py & python simulator.py" in git-bash.
+
+**Project File Structure**
+```
+traffic-simulation/
+│
+├── queue.py                    # Queue data structures implementation
+│   ├── Node                    # Linked list node for vehicle storage
+│   ├── VehicleQueue            # FIFO queue using singly linked list
+│   ├── LaneNode                # Priority queue node for lane management
+│   └── LanePriorityQueue       # Priority queue for lane serving order
+│
+├── traffic_generator.py        # Main traffic generation logic
+│   ├── Vehicle                 # Vehicle class with destination logic
+│   └── TrafficSystem           # Core traffic management system
+│       ├── vehicle_adder()     # Generates vehicles randomly
+│       ├── check_priority()    # Monitors AL2 priority condition
+│       ├── process_lights()    # Manages traffic light states
+│       └── serve_vehicles()    # Dequeues vehicles during green light
+│
+├── server_socket.py            # Server-side socket communication
+│   └── SocketServer            # Handles client connections
+│       ├── send_to_client()    # Sends data to specific client
+│       ├── broadcast_data()    # Broadcasts to all connected clients
+│       ├── handle_client()     # Manages individual client threads
+│       └── start()             # Initializes server on port 5050
+│
+├── client_socket.py            # Client-side socket communication
+│   └── SocketClient            # Connects to traffic generator
+│       ├── connect()           # Establishes server connection
+│       ├── receive_data()      # Continuously receives traffic data
+│       └── start()             # Starts client with callback function
+│
+└── simulator.py                # Pygame visualization client
+    ├── Car                     # Vehicle rendering and movement logic
+    └── TrafficSimulator        # Main simulation controller
+        ├── update_from_data()  # Updates state from server data
+        ├── draw()              # Renders traffic visualization
+        └── update()            # Handles car movement and physics
+```
+
+***File Purposes***
+
+| File | Purpose | Key Components |
+|------|---------|----------------|
+| **queue.py** | Implements queue data structures for vehicle and lane management | VehicleQueue (linked list FIFO), LanePriorityQueue (array-based) |
+| **traffic_generator.py** | Generates traffic, manages queues, processes traffic lights | TrafficSystem orchestrates all traffic logic |
+| **server_socket.py** | Server-side network communication | Broadcasts traffic data to connected simulators |
+| **client_socket.py** | Client-side network communication | Receives traffic data from generator |
+| **simulator.py** | Visual representation using pygame | Renders cars, lanes, and traffic lights in real-time |
+
+## Communication Flow
+```
+traffic_generator.py  ─┐
+                       ├──> Uses queue.py for data structures
+                       └──> Uses server_socket.py for broadcasting
+                                      │
+                                      │ Socket Network (Port 5050)
+                                      │
+simulator.py ──────────┐              │
+                       ├──> Uses client_socket.py for receiving data
+                       └──< Receives traffic updates ───────┘
+```
+
+## How to Run
+bash
+# Terminal 1: Start traffic generator (server)
+python traffic_generator.py
+
+# Terminal 2: Start simulator (client)
+python simulator.py
+
+
+**Note:** Start the traffic generator first, then the simulator will connect automatically.
 
 ---
 
@@ -123,7 +202,7 @@ component's execution.
 | LanePriorityQueue.enqueue() | O(n log n) |
 | LanePriorityQueue.update_priority() | O(n log n) |
 | LanePriorityQueue.get_priority() | O(n) |
-
+note: VehicleQueue is implemented differently to LanePriorityQueue, hence the difference in time complexity.
 ***1. Vehicle Generation***
 
 Vehicle generation runs in O(m) time, where m = 8 represents the number of active lanes. Each lane has a 30 percent probability of generating a vehicle. Creating a vehicle and enqueuing it takes O(1) time per vehicle. Since m is fixed at 8, the total cost becomes O(8), which simplifies to O(1) constant time.
