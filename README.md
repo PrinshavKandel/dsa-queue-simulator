@@ -5,6 +5,15 @@ Running the program is achieved by running the programs, traffic_generator.py an
 ---
 DEMONSTRATION VIDEO: https://youtu.be/dGJtmiF-Mvo
 ---
+The aims of this project are to:
+1. Server-side traffic generation using linked list-based queues to manage vehicles across 8 active
+lanes,
+2. Priority queue system that dynamically adjusts lane priorities based on traffic density,
+3. Client-side visualization using Pygame to display real-time vehicle movement and traffic light
+states.
+4. Socket-based communication for real-time data synchronization between server and client
+---
+
 Refrences:
 1)Object Oriented programming essentials in python:
 ---
