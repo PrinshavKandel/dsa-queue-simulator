@@ -25,8 +25,8 @@ states.
 **Queue Logic:**
 
 This project uses two queue data structures to manage traffic. The first is a normal vehicle queue that
-follows the First In First Out principle and is implemented using a singly linked list.
-The second structure is a lane priority queue, implemented using an array-based list, which determines the
+follows the First In First Out principle and is implemented using a ***singly linked list***.
+The second structure is a lane priority queue, implemented using an ***array-based list***, which determines the
 order in which lanes are served. Each lane has an associated priority value, and the list is kept sorted so
 that the highest-priority lane is served first. Under normal conditions, all lanes have equal priority. When
 congestion occurs, such as when lane AL2 exceeds ten vehicles, it is given higher priority and served
@@ -75,24 +75,60 @@ component's execution.
 
 ---
 
-Refrences:
-1)Object Oriented programming essentials in python:
+***A description of the class Methods(functions) used:**
+
+***VehicleQueue Functions***
+
+1. enqueue(vehicle) - Adds vehicle to rear of queue (O(1))
+2. dequeue() - Removes and returns vehicle from front of queue (O(1))
+3. is_empty() - Checks if queue is empty (O(1))
+4. size() - Returns current queue size (O(1))
+5. get_all_vehicles() - Returns list of all vehicles in queue (O(n))
+
+***LanePriorityQueue Functions***
+
+1. enqueue(lane_node) - Adds lane to priority queue and sorts (O(n log n))
+2. dequeue() - Removes highest priority lane (O(1))
+3. peek() - Returns highest priority lane without removing (O(1))
+4. update_priority(lane_name, new_priority) - Updates priority and re-sorts (O(n log n))
+5. get_priority(lane_name) - Gets current priority of a lane (O(n))
+6. get_all_lanes() - Returns all lanes sorted by priority (O(1))
+
+***TrafficSystem Functions***
+
+1. vehicle_adder() - Randomly generates vehicles and adds to queues
+2. check_priority_condition() - Monitors AL2 size and updates priority
+3. process_traffic_lights() - Main traffic light processing loop
+4. select_next_green_road() - Determines which road gets green light next
+5. serve_current_green_road() - Dequeues vehicles from green road lanes
+6. get_broadcast_data() - Prepares data for client broadcast
+
+***Car Movement Functions***
+1.move(light_state) - Updates car position based on light state
+2.check_collision_ahead(other_cars) - Prevents cars from colliding
+3.should_stop_at_red(light_state) - Checks if car should stop at red light
+4.has_passed_intersection() - Determines if car has crossed intersection
 
 ---
+
+***Refrences:***
+
+---
+
+1)Object Oriented programming essentials in python:
+
+
 https://www.youtube.com/watch?v=JeznW_7DlB0
 
 ---
 
 2)Socket Programming in python:
 
----
-
 https://youtu.be/3QiPPX-KeSc?si=pcBCv3WEB7s48JIF
 https://www.youtube.com/watch?v=bwTAVGg_kVs
 
 ---
 3)Pygame essentials
----
 
 https://www.tutorialspoint.com/pygame/pygame_moving_rectangular_objects.htm
 https://www.geeksforgeeks.org/python/how-to-make-a-pygame-window/
@@ -100,5 +136,5 @@ https://www.pygame.org/docs/tut/MoveIt.html
 
 ---
 4)Miscellaneous
----
+
 https://www.geeksforgeeks.org/python/what-does-the-if-__name__-__main__-do/
